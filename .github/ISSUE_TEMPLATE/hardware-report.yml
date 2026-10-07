@@ -1,0 +1,67 @@
+name: Hardware test report
+description: Tell us what happened on a real player (works / does not work / partly).
+title: "[report] "
+labels: ["hardware-report"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you! Failures are as useful as successes. **Do not attach firmware, dumps, vendor files or photos with
+        serial numbers.** Hashes, offsets and short hex excerpts are fine.
+  - type: dropdown
+    id: area
+    attributes:
+      label: What did you test?
+      options:
+        - Video (AVI from make_player_avi.py)
+        - Video (AMV)
+        - Font patch (Cyrillic / Ukrainian)
+        - Flash read / descramble
+        - Flash write
+        - Something else
+    validations:
+      required: true
+  - type: dropdown
+    id: result
+    attributes:
+      label: Result
+      options:
+        - Works
+        - Partly works
+        - Does not work
+    validations:
+      required: true
+  - type: input
+    id: player
+    attributes:
+      label: Player (name on the box or seller, screen size)
+    validations:
+      required: true
+  - type: input
+    id: chip
+    attributes:
+      label: Chip (answer of adfu_info, USB ids 10d6:xxxx)
+      placeholder: "00 CADFUD 30 51 -> ATJ2157"
+  - type: input
+    id: firmware
+    attributes:
+      label: Firmware version string (as shown by tools/lfi_tool.py validate)
+      placeholder: "1.101.56"
+  - type: input
+    id: version
+    attributes:
+      label: Toolkit commit or release
+  - type: textarea
+    id: details
+    attributes:
+      label: What exactly did you do, and what happened?
+      description: Command lines, video format (codec, size, fps, audio), what the screen showed, error messages.
+    validations:
+      required: true
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: Checks
+      options:
+        - label: I did not attach firmware, dumps, vendor files or anything with a serial number.
+          required: true

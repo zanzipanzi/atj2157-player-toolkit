@@ -1,0 +1,28 @@
+name: Bug in a tool
+description: A script or payload misbehaves.
+labels: ["bug"]
+body:
+  - type: input
+    id: tool
+    attributes:
+      label: Which tool or file?
+      placeholder: "tools/make_player_avi.py"
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What did you run, what did you expect, what happened?
+    validations:
+      required: true
+  - type: input
+    id: env
+    attributes:
+      label: Environment (OS, Python, ffmpeg version)
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: Checks
+      options:
+        - label: I did not attach firmware, dumps, vendor files or anything with a serial number.
+          required: true

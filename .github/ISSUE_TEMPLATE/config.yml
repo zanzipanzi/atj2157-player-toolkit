@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Read first - safety notes
+    url: https://github.com/zanzipanzi/atj2157-player-toolkit/blob/main/SAFETY.md
+    about: Anything that writes to flash can brick the player. Read this before running it.
+  - name: Technical notes
+    url: https://github.com/zanzipanzi/atj2157-player-toolkit/blob/main/docs/technical-notes.md
+    about: ADFU protocol, scrambler, write protection, LFI, font and video formats.
