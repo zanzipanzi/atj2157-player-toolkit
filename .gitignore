@@ -1,0 +1,21 @@
+# Vendor firmware, dumps and fonts must never be committed (copyright + device identifiers)
+*.bin
+*.elf
+*.o
+*.AL
+*.AP
+*.DRV
+*.FON
+*.FNT
+*.fon
+*.fnt
+firmware/
+dumps/
+out/
+# generated media
+*.avi
+*.amv
+# python / build
+__pycache__/
+.pytest_cache/
+obj/
