@@ -1,5 +1,7 @@
 # ATJ2157 player toolkit
 
+[![tests](https://github.com/zanzipanzi/atj2157-player-toolkit/actions/workflows/tests.yml/badge.svg)](https://github.com/zanzipanzi/atj2157-player-toolkit/actions/workflows/tests.yml)
+
 Reverse-engineering notes and tools for cheap **Actions ATJ2157** "iPod-nano clone" MP3/MP4 players (ARM Cortex-M4F,
 GD25Q32 SPI flash, microSD media). Born from a practical problem: the player could not show Russian text properly
 (letters were drawn in a CJK-width cell) and had no Ukrainian letters; later someone with the same player asked why
@@ -51,6 +53,12 @@ Python 3.10+; for the chip-side parts a Linux host with `arm-none-eabi-gcc` and 
 One unit: ATJ2157, GD25Q32, firmware version string `1.101.56`, 1.8"-class screen. Everything marked
 **(unverified)** in the notes was not confirmed on hardware. Other units with the same chip may differ. Please read
 [SAFETY.md](SAFETY.md) before running any write.
+
+## Reports from real players are welcome
+
+Most of this was verified on one unit, and the video converter has not been tried on a real player yet. If you have an ATJ2157 (or
+similar) player, please [send a hardware test report](https://github.com/zanzipanzi/atj2157-player-toolkit/issues/new?template=hardware-report.yml): failures are as useful as successes. See
+[CONTRIBUTING.md](CONTRIBUTING.md) (never attach firmware or dumps).
 
 ## License
 
