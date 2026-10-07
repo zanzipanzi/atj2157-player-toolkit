@@ -1,3 +1,3 @@
 # only needed for the optional firmware-parser check and the tests
-unicorn>=2.0
+unicorn>=2.1.4
 pytest>=7
