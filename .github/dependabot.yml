@@ -8,3 +8,6 @@ updates:
     directory: /
     schedule:
       interval: monthly
+    # requirements.txt only states minimum versions on purpose; do not raise them unless a new
+    # release would otherwise fall outside the allowed range (CI already tests the newest versions)
+    versioning-strategy: increase-if-necessary
