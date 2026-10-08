@@ -75,6 +75,31 @@ python tools/make_player_avi.py фильм.mp4 для_плеера.amv --format 
 - Нет донорского шрифта. Соберите свободный из GNU Unifont или смотрите другие варианты в [где взять всё нужное](docs/where-to-get.ru.md).
 - Нет фотографий и медиафайлов.
 
+## Установка командами (необязательно)
+
+Всё можно запускать прямо из клона (`python tools/<имя>.py`). Чтобы получить короткие команды:
+
+```
+pipx install "git+https://github.com/zanzipanzi/atj2157-player-toolkit.git"
+# или, чтобы конвертер видео ещё и проверял файл разбором из прошивки (нужен пакет Unicorn):
+pipx install "atj2157-player-toolkit[emulator] @ git+https://github.com/zanzipanzi/atj2157-player-toolkit.git"
+```
+
+(В виртуальном окружении так же работает обычный `pip install`.) Каждая команда - это скрипт с тем же названием:
+
+| Команда | Скрипт |
+|---|---|
+| `atj2157-lfi` | `tools/lfi_tool.py` |
+| `atj2157-lfi-replace` | `tools/lfi_replace.py` |
+| `atj2157-fnt-patch` | `tools/fnt_patch.py` |
+| `atj2157-fnt-add-ukr` | `tools/fnt_add_ukr.py` |
+| `atj2157-font-transplant` | `tools/font_transplant.py` |
+| `atj2157-donor-from-unifont` | `tools/make_donor_from_unifont.py` |
+| `atj2157-make-avi` | `tools/make_player_avi.py` |
+| `atj2157-vp-check` | `tools/mmm_vp_walker_emu.py` |
+
+Пакета на PyPI нет. Программы для чипа из `payload/` в него не входят (им нужен кросс-компилятор C): берите готовые, только для чтения, из каждого релиза.
+
 ## Требования
 
 Python 3.10+; для частей, работающих с чипом, Linux с `arm-none-eabi-gcc` и утилитой `actions_dump` из проекта

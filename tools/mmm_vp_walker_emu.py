@@ -17,8 +17,11 @@ import struct
 import sys
 from pathlib import Path
 
-from unicorn import (UC_ARCH_ARM, UC_HOOK_CODE, UC_MODE_MCLASS, UC_MODE_THUMB, Uc, UcError)
-from unicorn.arm_const import UC_ARM_REG_LR, UC_ARM_REG_PC, UC_ARM_REG_R0, UC_ARM_REG_R1, UC_ARM_REG_R2, UC_ARM_REG_SP
+try:
+    from unicorn import (UC_ARCH_ARM, UC_HOOK_CODE, UC_MODE_MCLASS, UC_MODE_THUMB, Uc, UcError)
+    from unicorn.arm_const import UC_ARM_REG_LR, UC_ARM_REG_PC, UC_ARM_REG_R0, UC_ARM_REG_R1, UC_ARM_REG_R2, UC_ARM_REG_SP
+except ImportError as exc:   # an ImportError subclass on purpose: make_player_avi.py treats it as 'skip the check'
+    raise ImportError('needs the "unicorn" package: pip install unicorn  (or the [emulator] extra)') from exc
 
 # The vendor module is NOT part of this repository: extract it from your own player's firmware
 # (tools/lfi_tool.py extract) and point MMM_VP_AL at it, or pass --al.

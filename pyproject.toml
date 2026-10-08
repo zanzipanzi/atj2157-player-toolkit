@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "atj2157-player-toolkit"
+version = "0.3.0.dev0"
+description = "Notes and tools for cheap ATJ2157 'iPod nano clone' MP3/MP4 players: firmware (LFI) tools, font patching (Cyrillic, Ukrainian), video converter"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "zanzipanzi" }]
+keywords = ["ATJ2157", "Actions Semiconductor", "mp3 player", "firmware", "font", "cyrillic", "ukrainian"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Topic :: System :: Hardware",
+]
+# the command-line tools need nothing but the standard library
+dependencies = []
+
+[project.optional-dependencies]
+# only for atj2157-vp-check and the firmware-parser check inside atj2157-make-avi
+emulator = ["unicorn>=2.0"]
+dev = ["pytest>=7", "unicorn>=2.0"]
+
+[project.urls]
+Homepage = "https://github.com/zanzipanzi/atj2157-player-toolkit"
+Issues = "https://github.com/zanzipanzi/atj2157-player-toolkit/issues"
+
+# Each command is the same script that lives in tools/ and still runs as `python tools/<name>.py`.
+[project.scripts]
+atj2157-lfi = "lfi_tool:cli"
+atj2157-lfi-replace = "lfi_replace:main"
+atj2157-fnt-patch = "fnt_patch:main"
+atj2157-fnt-add-ukr = "fnt_add_ukr:main"
+atj2157-font-transplant = "font_transplant:main"
+atj2157-donor-from-unifont = "make_donor_from_unifont:main"
+atj2157-make-avi = "make_player_avi:main"
+atj2157-vp-check = "mmm_vp_walker_emu:main"
+
+[tool.setuptools]
+package-dir = { "" = "tools" }
+py-modules = [
+    "lfi_tool",
+    "lfi_replace",
+    "fnt_patch",
+    "fnt_add_ukr",
+    "font_transplant",
+    "make_donor_from_unifont",
+    "make_player_avi",
+    "mmm_vp_walker_emu",
+]

@@ -89,6 +89,9 @@ def extract(data, lfi, out_dir):
 
 
 def main(argv):
+    if argv[:1] in (['-h'], ['--help']):
+        print(__doc__)
+        return 0
     if len(argv) < 2 or argv[0] not in ('find', 'validate', 'extract'):
         print(__doc__)
         return 2
@@ -109,5 +112,9 @@ def main(argv):
     return 0
 
 
-if __name__ == '__main__':
+def cli():
     sys.exit(main(sys.argv[1:]))
+
+
+if __name__ == '__main__':
+    cli()

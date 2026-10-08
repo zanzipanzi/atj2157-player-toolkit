@@ -56,6 +56,9 @@ def crop(rec):
 
 
 def main():
+    if sys.argv[1:2] in (['-h'], ['--help']):
+        print(__doc__)
+        return
     if len(sys.argv) != 4:
         sys.exit(__doc__)
     fnt = bytearray(open(sys.argv[1], 'rb').read())

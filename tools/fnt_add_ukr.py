@@ -61,6 +61,9 @@ def build(head16, recs, trailer=b''):
 
 
 def main():
+    if sys.argv[1:2] in (['-h'], ['--help']):
+        print(__doc__)
+        return
     if len(sys.argv) < 4:
         sys.exit(__doc__)
     fnt = open(sys.argv[1], 'rb').read()

@@ -74,6 +74,31 @@ Status: this is verified against the firmware's own header parser (emulated) and
 - No donor font. Build a free one from GNU Unifont, or see the other options in [where to get everything](docs/where-to-get.md).
 - No photos or media.
 
+## Install as commands (optional)
+
+You can run everything straight from a clone (`python tools/<name>.py`). To get short commands instead:
+
+```
+pipx install "git+https://github.com/zanzipanzi/atj2157-player-toolkit.git"
+# or, to also get the firmware-parser check for the video converter (needs the Unicorn package):
+pipx install "atj2157-player-toolkit[emulator] @ git+https://github.com/zanzipanzi/atj2157-player-toolkit.git"
+```
+
+(Inside a virtual environment plain `pip install` works the same way.) Each command is the script of the same name:
+
+| Command | Script |
+|---|---|
+| `atj2157-lfi` | `tools/lfi_tool.py` |
+| `atj2157-lfi-replace` | `tools/lfi_replace.py` |
+| `atj2157-fnt-patch` | `tools/fnt_patch.py` |
+| `atj2157-fnt-add-ukr` | `tools/fnt_add_ukr.py` |
+| `atj2157-font-transplant` | `tools/font_transplant.py` |
+| `atj2157-donor-from-unifont` | `tools/make_donor_from_unifont.py` |
+| `atj2157-make-avi` | `tools/make_player_avi.py` |
+| `atj2157-vp-check` | `tools/mmm_vp_walker_emu.py` |
+
+The package is not published on PyPI. The chip programs in `payload/` are not part of it (they need a C cross-compiler): use the prebuilt read-only ones attached to each release.
+
 ## Requirements
 
 Python 3.10+; for the chip-side parts a Linux host with `arm-none-eabi-gcc` and the

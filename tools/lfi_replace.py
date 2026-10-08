@@ -45,6 +45,9 @@ def check(img, lfi):
 
 
 def main():
+    if sys.argv[1:2] in (['-h'], ['--help']):
+        print(__doc__)
+        return
     if len(sys.argv) != 6:
         sys.exit(__doc__)
     img = bytearray(open(sys.argv[1], 'rb').read())

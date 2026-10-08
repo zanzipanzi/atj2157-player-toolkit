@@ -19,3 +19,8 @@ out/
 __pycache__/
 .pytest_cache/
 obj/
+
+# packaging
+build/
+dist/
+*.egg-info/
