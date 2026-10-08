@@ -7,18 +7,49 @@ GD25Q32 SPI flash, microSD media). Born from a practical problem: the player cou
 (letters were drawn in a CJK-width cell) and had no Ukrainian letters; later someone with the same player asked why
 no video would open.
 
-[Русская версия](README.ru.md) | [Українська](README.uk.md) | [Technical notes](docs/technical-notes.md) (also [in Russian](docs/technical-notes.ru.md)) | [Safety](SAFETY.md)
+**English** | [Українська](README.uk.md) | [Русский](README.ru.md)
+
+Technical notes: [EN](docs/technical-notes.md) · [UK](docs/technical-notes.uk.md) · [RU](docs/technical-notes.ru.md) ·
+Where to get everything: [EN](docs/where-to-get.md) · [UK](docs/where-to-get.uk.md) · [RU](docs/where-to-get.ru.md) ·
+[Compatibility](docs/compatibility.md) · [Safety](SAFETY.md)
+
+## Quick start: what do you want to do?
+
+```mermaid
+flowchart TD
+  A{"What do you want?"}
+  A -->|"Fix Cyrillic letters or add Є І Ї Ґ"| F1["1. Dump your flash, read-only"]
+  F1 --> F2["2. Build a free donor font from Unifont"]
+  F2 --> F3["3. Patch NEW_M.FNT with fnt_patch and fnt_add_ukr"]
+  F3 --> F4["4. Write the changed sectors with the guarded script"]
+  A -->|"Make video play"| V1["1. Install ffmpeg"]
+  V1 --> V2["2. make_player_avi.py movie.mp4 out.avi"]
+  V2 --> V3["3. Copy it to the player and report the result"]
+  A -->|"Understand the flash and firmware"| U1["1. Read the technical notes"]
+  U1 --> U2["2. lfi_tool.py validate and extract on your dump"]
+```
+
+- **Fonts:** [where to get everything](docs/where-to-get.md), then [technical notes, sections 4-8](docs/technical-notes.md). Read [SAFETY.md](SAFETY.md) first.
+- **Video:** [short answer below](#why-the-video-does-not-open-short-answer), details in [technical notes, section 9](docs/technical-notes.md).
+- **Just curious:** start with the [technical notes](docs/technical-notes.md).
 
 ## What is in here
 
 | Part | What it gives you |
 |---|---|
 | [`docs/technical-notes.md`](docs/technical-notes.md) | ADFU service-mode protocol, memory map, boot ROM, SPI controller, **the flash scrambler** (read bit `0x1000`, write bit `0x2000`, the 512-byte-stream trick), write protection and how to lift it volatilely, LFI firmware format, `NEW_M.FNT` font format, video requirements |
+| [`docs/where-to-get.md`](docs/where-to-get.md) | verified links and commands for every tool and file you need (this repository ships none of them) |
+| [`docs/compatibility.md`](docs/compatibility.md) | which players were tested and what worked |
 | [`payload/`](payload) | C payloads that run on the chip (read / status / guarded write) and the shell drivers around them |
 | [`tools/lfi_tool.py`](tools/lfi_tool.py), [`lfi_replace.py`](tools/lfi_replace.py) | validate / unpack the firmware directory; replace a same-size file and fix the checksums |
 | [`tools/fnt_patch.py`](tools/fnt_patch.py), [`fnt_add_ukr.py`](tools/fnt_add_ukr.py) | narrow Cyrillic glyphs + Ukrainian `Є І Ї Ґ` in `NEW_M.FNT` without changing the file size |
+| [`tools/make_donor_from_unifont.py`](tools/make_donor_from_unifont.py) | builds the donor font for the two tools above from free GNU Unifont, so no vendor font is needed |
 | [`tools/make_player_avi.py`](tools/make_player_avi.py) | convert any video into the exact AVI (or AMV) layout the player's video module accepts |
 | [`tools/mmm_vp_walker_emu.py`](tools/mmm_vp_walker_emu.py) | run the player's **own** AVI/AMV header parser under the Unicorn CPU emulator on your file |
+
+Each release also carries **prebuilt read-only payloads** (`spiid`, `spistat`, `spiread`) with a `SHA256SUMS` file, built by CI
+from this source, so you can dump your flash without installing a compiler. The writing payload (`spiwrite`) is deliberately
+source-only: build it yourself and read what it does.
 
 ## Why the video does not open (short answer)
 
@@ -39,8 +70,8 @@ Status: this is verified against the firmware's own header parser (emulated) and
 ## What is NOT in this repository (on purpose)
 
 - No firmware, ROM dumps, flash images or unpacked firmware files: they are the vendor's copyrighted code and carry
-  identifiers of one device. Dump **your own** player (see the technical notes).
-- No donor font. `fnt_patch.py` needs a `UNICODE.FON` taken from another Actions player's firmware.
+  identifiers of one device. Dump **your own** player ([where to get everything](docs/where-to-get.md)).
+- No donor font. Build a free one from GNU Unifont, or see the other options in [where to get everything](docs/where-to-get.md).
 - No photos or media.
 
 ## Requirements

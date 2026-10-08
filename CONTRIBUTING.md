@@ -7,7 +7,7 @@ here was verified on a single unit.
 
 Open an issue with the **Hardware test report** form: what you tried (video AVI/AMV, font patch, flash read/write), the
 player and chip (`adfu_info` answer), the firmware version string, and the result. Failures are as useful as successes.
-Issues in English, Russian or Ukrainian are all fine.
+Issues in English, Ukrainian or Russian are all fine.
 
 ## Hard rules
 

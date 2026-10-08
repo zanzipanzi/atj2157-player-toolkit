@@ -5,7 +5,7 @@ firmware on a **GD25Q32** 4 MiB SPI NOR, microSD for media, firmware version str
 units with the same chip are likely similar, but nothing below is guaranteed for them. Statements marked
 **(unverified)** come from reading code or documentation and were not confirmed on hardware.
 
-Russian version of these notes: [technical-notes.ru.md](technical-notes.ru.md). (The charts below have Russian labels.)
+Other languages: [Українська](technical-notes.uk.md), [Русский](technical-notes.ru.md). The charts contain only numbers and addresses; their legends are given as text under each picture. Where to get the tools and files you need: [where-to-get.md](where-to-get.md).
 
 ## 1. Identify the device
 
@@ -54,7 +54,13 @@ Addresses used by the payloads in [`payload/`](../payload):
 `read_mem2` copies through a helper that lands on `0x11E000`, so a payload must be **reloaded before every
 `read_mem2`**. A stale "unexpected status" answer after a failed command is cured by replugging.
 
-![RAM map of the chip](img/chart_sram.png)
+<p align="center">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="img/chart_sram.dark.png">
+  <img alt="RAM map of the chip" src="img/chart_sram.light.png">
+</picture><br>
+<sub>Numbers: 1 ROM tables and config words; 2 MBREC, the live boot record; 3 BREC, second stage with the SPI driver; 4 <code>adfus.bin</code>, our agent in the chip (1012 bytes); 5 adfus NAND buffer, unused; 6 payload (<code>spiid</code>/<code>spiread</code>/<code>spistat</code>/<code>spiwrite</code>); 7 ARGS and RESULT; 8 DATA, a 16 KiB buffer; 9 SRC, data for <code>spiwrite</code>.</sub>
+</p>
 
 Build the payloads with `arm-none-eabi-gcc -march=armv7-m -mthumb` (without the flags the assembler fails with
 `invalid constant ... after fixup`, because the default target is ARM, not Thumb-2).
@@ -82,7 +88,13 @@ GD25-family opcodes work: `0x9F` JEDEC id (`C8 40 16`), `0xAB` wake, `0x0B` fast
 registers 1-3, `0x06` write enable, `0x20` 4 KiB erase, `0x02` page program (wraps at 256 bytes), `0x50` volatile
 write-enable, `0x01` write status.
 
-![Entropy: raw vs descrambled flash](img/chart_entropy.png)
+<p align="center">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="img/chart_entropy.dark.png">
+  <img alt="Entropy of the flash" src="img/chart_entropy.light.png">
+</picture><br>
+<sub>Entropy of the flash in 16 KiB blocks. 1 (red): as stored on the flash, it looks like noise (about 8 bit/B); 2 (blue): after the controller's descrambler.</sub>
+</p>
 
 **The flash content is scrambled by the controller.** A raw dump has entropy ~7.91 bits/byte and no readable
 strings. Facts that characterise the scrambler:
@@ -93,7 +105,13 @@ strings. Facts that characterise the scrambler:
   the image: it depends on the data. A GF(2)-affine fit of the plaintext word from the current and the previous 8 or
   16 ciphertext words was inconsistent for all 32 bits. We did **not** try richer models, and we never reproduced
   the algorithm offline.
-![Models of the scrambler that failed](img/chart_models.png)
+<p align="center">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="img/chart_models.dark.png">
+  <img alt="Scrambler models that did not fit" src="img/chart_models.light.png">
+</picture><br>
+<sub>Models of the scrambler that did not fit the data. A bar is the share of conflicts (same context, different key byte); after it: distinct contexts / samples. The bottom three rows look good only because with long contexts almost every sample is unique, so a conflict has nowhere to occur: they prove nothing. i = byte index, K = key stream, C = ciphertext.</sub>
+</p>
 
 - So always go through the hardware:
   - **Read:** set the CTL descramble bit `0x1000` (the ROM does this from `ROM_CFG+0x68`, `CTL` mask `0xF000`).
@@ -102,10 +120,17 @@ strings. Facts that characterise the scrambler:
     takes at most 256 bytes. The working trick: send page A (first 256 bytes) normally, then send page B as a
     **512-byte transfer addressed at page B** (A's bytes then B's bytes). The chip's 256-byte page buffer wraps and
     keeps the last 256 bytes, and the scrambler state at that point is the correct continuation.
-  - ![Write stream: why the second page is sent as 512 bytes](img/chart_stream.png)
   - Test on a free sector first: writing known plaintext and reading it back descrambled gave 0 differences, and the
     raw bytes equalled the factory raw bytes. Setting only `0x1000` while writing does nothing useful (`0x1000` is the
     read bit).
+
+<p align="center">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="img/chart_stream.dark.png">
+  <img alt="Why the second page is sent as 512 bytes" src="img/chart_stream.light.png">
+</picture><br>
+<sub>I: the naive way, two commands of 256 bytes; the scrambler restarts in each, so the second half comes out wrong (254-256 differing bytes of 512). II: what we use, the second command sends all 512 bytes, the chip keeps the last 256 and the scrambler state is right (0 differing bytes).</sub>
+</p>
 
 ## 5. Write protection
 
@@ -115,7 +140,13 @@ A write to a protected sector is silently ignored by the chip: our first test "p
 because the sector was empty and nothing was written; the only sign was a status-poll counter of 0 for the erase.
 Always use an **independent** success signal (read-back, poll counters).
 
-![What the protection covers](img/chart_protection.png)
+<p align="center">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="img/chart_protection.dark.png">
+  <img alt="What the write protection covers" src="img/chart_protection.light.png">
+</picture><br>
+<sub>Write protection (SR1 = 0x08, SR2 = 0x40). 1: protected, <code>0x000000</code>-<code>0x3DFFFF</code>; 2: free top 128 KiB (<code>0x3E0000</code>-<code>0x3FFFFF</code>), where the firmware keeps its settings.</sub>
+</p>
 
 Unprotect volatilely: `0x50` (volatile write enable) then `0x01 <SR1> <SR2>` **without** `0x06`, so the
 non-volatile bits are untouched and a power cycle restores the protection. Verify the registers after the change and
@@ -124,10 +155,22 @@ After ADFU entry `SR1` may read `0x0A` instead of `0x08`: the ROM leaves WEL set
 
 ## 6. The LFI firmware image
 
-![Flash map](img/chart_flash_map.png)
+<p align="center">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="img/chart_flash_map.dark.png">
+  <img alt="Flash map" src="img/chart_flash_map.light.png">
+</picture><br>
+<sub>Flash map, one square per 4 KiB sector. 1 boot records; 2 firmware files (LFI); 3 font file <code>NEW_M.FNT</code>; 4 empty; 5 settings (written by the player itself); 6 sectors written in stage 1 (Russian, 2 sectors); 7 sectors added in stage 2 (Ukrainian).</sub>
+</p>
 
 The firmware is a directory of files ("LFI") starting at flash offset `0x11400` and ending at `0x3D8600`
-(81 files, ~3.78 MiB). ![Largest files of the firmware](img/chart_lfi_sizes.png)
+(81 files, ~3.78 MiB). <p align="center">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="img/chart_lfi_sizes.dark.png">
+  <img alt="Largest firmware files" src="img/chart_lfi_sizes.light.png">
+</picture><br>
+<sub>The 16 largest of the 81 firmware files (KiB). The font file <code>NEW_M.FNT</code> is highlighted.</sub>
+</p>
 
 Format and checksums are documented in the docstring of [`tools/lfi_tool.py`](../tools/lfi_tool.py);
 both checksums are plain 16/32-bit sums, so a same-size file can be replaced and the sums recomputed
@@ -146,13 +189,31 @@ out. The fix replaces the 66 records (U+0401, U+0410..U+044F, U+0451) in place w
 Actions font (width 5-12, mean 14.00 -> 7.92) and crops four quote glyphs. Ukrainian letters (`Є І Ї Ґ є і ї ґ`) were
 missing: they are added by deleting eight Roman numerals `U+2172..U+2179` and rebuilding the sorted array and
 index, so the file size does not change and the LFI does not move. Tools: [`tools/fnt_patch.py`](../tools/fnt_patch.py),
-[`tools/fnt_add_ukr.py`](../tools/fnt_add_ukr.py). The donor font is **not** included (copyright); supply your own.
+[`tools/fnt_add_ukr.py`](../tools/fnt_add_ukr.py). The donor font is **not** included (copyright); see [where-to-get.md](where-to-get.md) for where to find it or how to build a free one.
 
-![All 66 Russian glyphs before and after](img/chart_glyph_grid.png)
+<p align="center">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="img/chart_glyph_widths.dark.png">
+  <img alt="Russian glyph widths before and after" src="img/chart_glyph_widths.light.png">
+</picture><br>
+<sub>Advance width of the 66 Russian glyphs, one box per letter. 1: original font, all 14 px (the width of a CJK character); 2: after the fix, 5-12 px.</sub>
+</p>
 
-![Glyph width distribution](img/chart_width_hist.png)
+<p align="center">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="img/chart_width_hist.dark.png">
+  <img alt="Glyph width distribution" src="img/chart_width_hist.light.png">
+</picture><br>
+<sub>Width distribution of those 66 glyphs. 1 (red): before, all 66 are 14 px; 2 (green): after, 5-12 px (mean 7.92).</sub>
+</p>
 
-![Letters per text line before and after the font fix](img/chart_letters.png)
+<p align="center">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="img/chart_letters.dark.png">
+  <img alt="Letters per text line" src="img/chart_letters.light.png">
+</picture><br>
+<sub>Russian letters that fit in one text line of the 128-pixel screen. 1 (red): original font, 9; 2 (green): after the fix, 19.</sub>
+</p>
 
 Changed flash sectors: Russian patch `0xEE000` + `0x11000` (LFI head with the new checksums); Ukrainian
 patch `0xEE000`, `0xE9000`, `0xEA000`, `0x11000`. After flashing, a full 4 MiB read-back (raw and descrambled) differed from the
