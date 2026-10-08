@@ -18,7 +18,8 @@ Build (Linux or WSL, `arm-none-eabi-gcc` with Thumb-2 support): `make`. This pro
 Every release has `spiid.bin`, `spistat.bin` and `spiread.bin` plus `SHA256SUMS`, built by CI from the tagged source
 (`.github/workflows/release-assets.yml`). They only **read**, so you can dump your flash without a compiler: download them, check
 `sha256sum -c SHA256SUMS`, and use them in place of the files you would build with `make`. `spiwrite.bin` is deliberately
-**not** attached: build it yourself (`make`) and read `spiwrite.c` first. Rebuilding with another compiler version gives
+**not** attached: build it yourself (`make`) and read `spiwrite.c` first. The released binaries are byte-identical to the ones that were
+run on the tested unit (`spiread` SHA-256 `950b4e70...`, `spistat` `c6e983ce...`). Rebuilding with another compiler version can give
 different bytes, so compare the behaviour (or your own build), not just the hash.
 
 `host/` holds the shell drivers that call `actions_dump` from the
