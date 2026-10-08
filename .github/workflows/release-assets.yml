@@ -1,0 +1,38 @@
+name: release-assets
+
+# Builds the READ-ONLY chip payloads from the tagged source and attaches them to the release with SHA256SUMS.
+# spiwrite (the writing payload) is deliberately not attached: build it yourself and read what it does.
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag to attach the payloads to
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  payloads:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    env:
+      TAG: ${{ github.event.release.tag_name || inputs.tag }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.release.tag_name || inputs.tag }}
+          persist-credentials: false
+      - run: sudo apt-get update && sudo apt-get install -y gcc-arm-none-eabi
+      - run: make -C payload spiid.bin spistat.bin spiread.bin
+      - run: |
+          cd payload
+          sha256sum spiid.bin spistat.bin spiread.bin | tee SHA256SUMS
+      - name: Attach to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$TAG" payload/spiid.bin payload/spistat.bin payload/spiread.bin payload/SHA256SUMS --clobber --repo "$GITHUB_REPOSITORY"

@@ -13,6 +13,14 @@ Small freestanding Thumb-2 programs that the host loads into chip RAM over ADFU 
 Build (Linux or WSL, `arm-none-eabi-gcc` with Thumb-2 support): `make`. This produces `*.bin` files that are
 **ignored by git on purpose**; build them yourself.
 
+## Prebuilt read-only payloads
+
+Every release has `spiid.bin`, `spistat.bin` and `spiread.bin` plus `SHA256SUMS`, built by CI from the tagged source
+(`.github/workflows/release-assets.yml`). They only **read**, so you can dump your flash without a compiler: download them, check
+`sha256sum -c SHA256SUMS`, and use them in place of the files you would build with `make`. `spiwrite.bin` is deliberately
+**not** attached: build it yourself (`make`) and read `spiwrite.c` first. Rebuilding with another compiler version gives
+different bytes, so compare the behaviour (or your own build), not just the hash.
+
 `host/` holds the shell drivers that call `actions_dump` from the
 [actions_flash](https://github.com/ilyakurdyukov/actions_flash) project:
 
